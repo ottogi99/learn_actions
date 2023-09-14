@@ -21,7 +21,7 @@ jobs:
 
     - name: Create folder
       run: |
-        mkdir -p /var/app/learning_github_action 
+        mkdir -p /var/app/learning_github_action
 
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@main
