@@ -39,5 +39,6 @@ jobs:
           # TARGET: secrets.REMOTE_TARGET
           # EXCLUDE: "/dist/, /node_modules/"
           # EXCLUDE: "/dist/, /node_modules/"
-          SCRIPT_AFTER: |
-            node dist/main.js
+
+    - name: Run web server
+      run: node dist/main.js
