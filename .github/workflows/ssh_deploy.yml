@@ -13,11 +13,13 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
+        cache: 'yarn'
+        
     - name: Install npm dependencies
-      run: npm install
+      run: yarn --frozen-lockfile
 
     - name: Run build task
-      run: npm run build --if-present
+      run: yarn build
 
     # Permission denied
     # - name: Create folder
@@ -29,7 +31,7 @@ jobs:
       with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ARGS: "-rlgoDzvc -i --delete"
-          SOURCE: "dist/"
+          # SOURCE: "."
           REMOTE_HOST: ${{ secrets.HOST }}
           REMOTE_PORT: ${{ secrets.PORT }}
           REMOTE_USER: ${{ secrets.USERNAME }}
