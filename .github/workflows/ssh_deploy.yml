@@ -36,6 +36,6 @@ jobs:
           TARGET: "/var/app/learning_github_action"
           # TARGET: secrets.REMOTE_TARGET
           # EXCLUDE: "/dist/, /node_modules/"
-          EXCLUDE: "/dist/, /node_modules/"
+          EXCLUDE: "/node_modules/"
           SCRIPT_AFTER: |
             node dist/main.js
