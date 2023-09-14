@@ -1,0 +1,37 @@
+name: Automatically Deployment
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+
+    name: Deploying to stage server
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: ${{ secrets.SCRIPT }}
+
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: ${{ secrets.SCRIPT }}
+
+          # GitHub Secret 적용
+          # Workflow가 실행될 때 필요한 정보들 중 외부에 노출되면 안되는 정보들은 GitHub Secret에 적용해야 한다.
+          # Settings > Security > Secrets and variables > Actions에 등록
+          #  

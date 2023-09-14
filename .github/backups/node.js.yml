@@ -21,10 +21,11 @@ jobs:
 
     steps:
     # This step uses the actions/checkout action to download a copy of your repository on the runner
-    - uses: actions/checkout@v3
+    - name: Checkout source code
+      uses: actions/checkout@v3
 
     # This step uses the actions/setup-node action to set up Node.js for each version indeicated by the matrix.node-version key above
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Set up Node.js(${{ matrix.node-version }})
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
@@ -34,7 +35,15 @@ jobs:
     # - run: npm ci
     # - run: npm run build --if-present
     # - run: npm test
-    - run: yarn install --immutable --immutable-cache --check-cache
-    - run: yarn build
-    - run: yarn test
+
+    - name: Install dependencies
+      # Install the dependencies defined in the yarn.lock
+      run: yarn --frozen-lockfile
+      # run: yarn install --immutable --immutable-cache --check-cache
+
+    - name: Build project
+      run: yarn build
+
+    - name: Test Unit
+      run: yarn test
     

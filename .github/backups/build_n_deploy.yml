@@ -1,0 +1,75 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    # This step uses the actions/checkout action to download a copy of your repository on the runner
+    - name: Checkout source code
+      uses: actions/checkout@v3
+
+    # This step uses the actions/setup-node action to set up Node.js for each version indeicated by the matrix.node-version key above
+    - name: Set up Node.js(${{ matrix.node-version }})
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'yarn'
+
+    # This step runs npm ci to install any dependencies listed your package.json file.
+    # - run: npm ci
+    # - run: npm run build --if-present
+    # - run: npm test
+
+    - name: Install dependencies
+      # Install the dependencies defined in the yarn.lock
+      run: yarn --frozen-lockfile
+      # run: yarn install --immutable --immutable-cache --check-cache
+
+    - name: Build project
+      run: yarn build
+
+    - name: Test Unit
+      run: yarn test
+
+  deploy:
+    needs: build
+
+    runs-on: ubuntu-lates
+
+    steps:
+    - name: Making zip file
+      run: zip -r ./dist
+
+    - name: Sending zip file
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        port: ${{ secrets.PORT }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        source: "./dist"
+        target: "source"
+        rm: true
+
+    - name: Executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: ${{ secrets.SCRIPT }}
